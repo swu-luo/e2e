@@ -1,5 +1,51 @@
 # e2e
 
+## 0.25.0
+
+### Minor Changes
+
+- [#1887](https://github.com/e2e-inc/e2e/pull/1887) [`198d25f`](https://github.com/e2e-inc/e2e/commit/198d25f038c5f69c697224ce22e2d73b38c97766) Thanks [@samanyudas](https://github.com/samanyudas)! - **Breaking:** `report-1` reports can now contain the `skip.cause` value `fixme`.
+  Update pinned copies of `schema/report-v1.schema.json` from this release and
+  handle `fixme` in exhaustive skip-cause checks. The report's `schemaVersion`
+  stays `report-1`.
+  
+  The new `test.fixme` API skips tests at registration or from inside their
+  bodies. The report gives the reason as `fixme`, or `fixme: <reason>` when you
+  give a non-blank reason.
+
+### Patch Changes
+
+- [#1971](https://github.com/e2e-inc/e2e/pull/1971) [`e20bfeb`](https://github.com/e2e-inc/e2e/commit/e20bfeb04709e64044600f116e899c842ac2b6a6) Thanks [@KrzysztofMoch](https://github.com/KrzysztofMoch)! - The e2e skill now says the Claude Code plugin does not register the MCP server, and tells the agent to register it in the project there. The Codex and Cursor plugins still include it.
+
+- [#1925](https://github.com/e2e-inc/e2e/pull/1925) [`c30354f`](https://github.com/e2e-inc/e2e/commit/c30354ff84668a9c4e0d7bd8790e93d85f40a20c) Thanks [@Vishwas1345](https://github.com/Vishwas1345)! - Add `test.describe.fail(title, fn)` and the `fail` option on `describe`, which mark every test in the group expected to fail.
+
+- [#2008](https://github.com/e2e-inc/e2e/pull/2008) [`5b61f22`](https://github.com/e2e-inc/e2e/commit/5b61f221aa69d6bf0b3dad0ea270fc85e5098475) Thanks [@michal-e2e](https://github.com/michal-e2e)! - Without a `session` option, two `mobile()` hosts from `launch()`, or a host and the test's own device, no longer drive one simulator under the same agent-device session. Each host hands its engine a random token as `hostId` in `prepare`, `init`, and `finish`, and the mobile engine names the host's session `e2e-<target>-<token>-<slot>`. `@e2e-dev/mobile` now needs `@e2e-dev/core` 0.24.1 or newer, the first release that sends `hostId`. A host that finds no free device now fails instead of sharing one. A host that ends without `close()` (`process.exit()`, a kill), or whose session fails to close, leaves its device held until you run `agent-device close --session <name>`; closing the host now fails with an error that names the session when the close fails. A host's artifact folders under `artifactsDir` are now named `core/host-<token>-<attempt id>`, so an engine platform that is a secret's value no longer reaches a path on disk.
+
+- [#1919](https://github.com/e2e-inc/e2e/pull/1919) [`e88153b`](https://github.com/e2e-inc/e2e/commit/e88153b2f3b4f6f6b00352dca3960bfe0967975b) Thanks [@WellDunDun](https://github.com/WellDunDun)! - Add `locator.blur()` to remove focus from a web element.
+
+- [#1972](https://github.com/e2e-inc/e2e/pull/1972) [`25eb2f8`](https://github.com/e2e-inc/e2e/commit/25eb2f8c5a265c083f0e8f41d3109bb7cbf24b2e) Thanks [@satya164](https://github.com/satya164)! - Attach to a test held at `screen.pause()` or `e2e run --step` with
+  `open_session {attach: "k3f9"}` in `e2e mcp`. Use the ID from the pause
+  header. The attached session has the same tools as a normal session on
+  that target. If the run already records the attempt, `start_recording`
+  returns an error with the run's video directory. `close_session` detaches
+  and leaves the test held. Resume continues the test right away while any
+  attached recording saves in the background.
+
+- [#2014](https://github.com/e2e-inc/e2e/pull/2014) [`7a8e546`](https://github.com/e2e-inc/e2e/commit/7a8e546e26a0c08fb0f52f237798c806dd5a611f) Thanks [@samanyudas](https://github.com/samanyudas)! - On iOS and Android, when a secure field on screen has no bounds to mask, `toHaveScreenshot` now fails at once with `POLICY_DENIED` instead of after its timeout, `app.screenshot()` fails with `POLICY_DENIED` instead of `ENGINE_FAILURE`, and an agent step reports `MASKING_UNPROVEN` for its screenshot.
+
+- [#1936](https://github.com/e2e-inc/e2e/pull/1936) [`eddf577`](https://github.com/e2e-inc/e2e/commit/eddf5775264134b61ce5ac986370dce2bf75844b) Thanks [@KrzysztofMoch](https://github.com/KrzysztofMoch)! - The built-in reporters are built on the public `Reporter` contract. Ids such as `'list'` and `'junit'` work as before; to pass options, call the factory from `e2e/reporters` instead: `list()`, `dot()`, `json()`, `junit({ outputFile })`, and `markdown({ outputFile })`. A reporter of your own can now do everything the built-ins do: take what user code prints (`onOutput`), show the `--step` prompt (`onStepPrompt`), print every reporter's summary rows (`onSummary`), and return files the runner writes atomically, even after a second Ctrl-C (`reportFiles`). `printsTo` names the terminal stream a reporter prints to, one reporter per stream; beside `json`, `list` and `dot` print to stderr unless given a `stream`, so `--reporter list,json` now works like `dot,json`. `--reporter` keeps the options of a built-in the config configured. `@e2e-dev/html-reporter` writes `report.html` through `reportFiles`.
+
+- [#1963](https://github.com/e2e-inc/e2e/pull/1963) [`ed48b0b`](https://github.com/e2e-inc/e2e/commit/ed48b0b455a3a2b1bfd5779b2c4b2d45bfe57bee) Thanks [@rentezzy](https://github.com/rentezzy)! - `screen.tapAt`, `screen.doubleTapAt`, and `screen.swipe({ from, to })` take percentages of the viewport as well as pixels: `screen.tapAt({ x: '50%', y: '50%' })`. Each coordinate is a number of CSS pixels or a string from `'0%'` through `'100%'`, and the two may mix. A percentage reads the screen once for the viewport size. The new `ScreenPoint` and `ScreenCoordinate` types are exported from `e2e` and `@e2e-dev/core`.
+
+- [#1952](https://github.com/e2e-inc/e2e/pull/1952) [`d88aa99`](https://github.com/e2e-inc/e2e/commit/d88aa99e0f5117924663a509f7fac8200d5c4a38) Thanks [@kdy1](https://github.com/kdy1)! - The bundled e2e skill now gives the Next.js setup in one place: `next dev` locally and `next start` in CI, the route announcer that `getByRole('alert')` also matches, a webpack watcher that reads `.e2e/`, and the `create-next-app` starter. It links the new Next.js docs page.
+
+- [#2015](https://github.com/e2e-inc/e2e/pull/2015) [`23aa697`](https://github.com/e2e-inc/e2e/commit/23aa697e2627b9c0ee436ea40128b3ee8f682c1c) Thanks [@satya164](https://github.com/satya164)! - `--step` and `screen.pause()` keys now appear below the live summary, with `s` for the screen and `l` for the app log.
+  Time when every running worker is paused is excluded from the terminal's `Duration` row and the report's new `run.durationMs` field.
+
+- [#1921](https://github.com/e2e-inc/e2e/pull/1921) [`a5d1788`](https://github.com/e2e-inc/e2e/commit/a5d178897a42e3736a5458a27ad3d17dfadbf8c6) Thanks [@imranbarbhuiya](https://github.com/imranbarbhuiya)! - Add `test.setTimeout(timeout)` to change the running test's timeout from its body or a `beforeEach` hook, or a `beforeAll` hook's own timeout.
+- Updated dependencies [[`e939a65`](https://github.com/e2e-inc/e2e/commit/e939a65668b07679b1b2271a66e34a8459eb0fe1), [`225ea85`](https://github.com/e2e-inc/e2e/commit/225ea85e1a6a36589ca87c432d0293c8ed9ede6b), [`3e7d19d`](https://github.com/e2e-inc/e2e/commit/3e7d19de16ea916ddfd761be3909cc873dd08a73), [`5b61f22`](https://github.com/e2e-inc/e2e/commit/5b61f221aa69d6bf0b3dad0ea270fc85e5098475), [`e88153b`](https://github.com/e2e-inc/e2e/commit/e88153b2f3b4f6f6b00352dca3960bfe0967975b), [`991b522`](https://github.com/e2e-inc/e2e/commit/991b522830e2c5ede57d4d2f92b2fbb87a9a20ba), [`25eb2f8`](https://github.com/e2e-inc/e2e/commit/25eb2f8c5a265c083f0e8f41d3109bb7cbf24b2e), [`7a8e546`](https://github.com/e2e-inc/e2e/commit/7a8e546e26a0c08fb0f52f237798c806dd5a611f), [`160cbfe`](https://github.com/e2e-inc/e2e/commit/160cbfe7a06df443d531060fc0e7467cb9db8368), [`ed48b0b`](https://github.com/e2e-inc/e2e/commit/ed48b0b455a3a2b1bfd5779b2c4b2d45bfe57bee), [`23aa697`](https://github.com/e2e-inc/e2e/commit/23aa697e2627b9c0ee436ea40128b3ee8f682c1c), [`198d25f`](https://github.com/e2e-inc/e2e/commit/198d25f038c5f69c697224ce22e2d73b38c97766), [`a5d1788`](https://github.com/e2e-inc/e2e/commit/a5d178897a42e3736a5458a27ad3d17dfadbf8c6)]:
+  - @e2e-dev/core@0.25.0
+
 ## 0.24.0
 
 ### Minor Changes

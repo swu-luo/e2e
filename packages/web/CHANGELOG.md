@@ -1,5 +1,31 @@
 # @e2e-dev/web
 
+## 0.17.0
+
+### Minor Changes
+
+- [#1621](https://github.com/e2e-inc/e2e/pull/1621) [`a06b931`](https://github.com/e2e-inc/e2e/commit/a06b931b8d51b693760f9db34781192eb676e603) Thanks [@Varshith-Kali](https://github.com/Varshith-Kali)! - **Release:** Chromium launches with its OS sandbox on by default on macOS and Windows, which helps contain a renderer exploit on a page the agent reaches. `web({ chromiumSandbox })` turns it on for Linux, where it stays off by default, or off elsewhere.
+
+### Patch Changes
+
+- [#2007](https://github.com/e2e-inc/e2e/pull/2007) [`f8aa313`](https://github.com/e2e-inc/e2e/commit/f8aa3131cb6cc70e7a8037489fcefa5ae6c25715) Thanks [@michal-e2e](https://github.com/michal-e2e)! - `toBeVisible()` and `isVisible()` now read an element as hidden when a closed `<details>` folds it away across a shadow boundary: an element in a shadow tree under a closed `<details>`, and an element slotted into a closed `<details>` inside an open shadow root or a closed one created with `attachShadow()`. Before, `toBeVisible()` passed on such an element although the page did not show it, and the agent's tree listed the slotted ones. A `display: contents` element whose own text is its content still reads visible there, as Playwright reads it. An element slotted into a closed shadow root created with `attachShadow()` under `content-visibility: hidden` now reads hidden as well, as it already did for an open root. A closed `<details>` body that the page's CSS shows through `::details-content` now reads visible, and so does content under `content-visibility: hidden` set on an element whose box skips nothing (`display: contents`, an inline element, a table, a table row, ruby); both read hidden before. Content under `content-visibility: hidden` on an inline `<svg>`, `<button>`, or `<fieldset>` still reads hidden, since each makes a box of its own.
+
+- [#1976](https://github.com/e2e-inc/e2e/pull/1976) [`8eb3cc2`](https://github.com/e2e-inc/e2e/commit/8eb3cc27eabaf663a35c9930b861c851e0fbff81) Thanks [@okwasniewski](https://github.com/okwasniewski)! - A config that infers `web()` or `mobile()` type-checks again under pnpm with `declaration: true`. It failed with TS2883 since e2e 0.24.0. The factories now return `WebEngine` and `MobileEngine`, exported from each package.
+
+- [#2008](https://github.com/e2e-inc/e2e/pull/2008) [`5b61f22`](https://github.com/e2e-inc/e2e/commit/5b61f221aa69d6bf0b3dad0ea270fc85e5098475) Thanks [@michal-e2e](https://github.com/michal-e2e)! - Without a `session` option, two `mobile()` hosts from `launch()`, or a host and the test's own device, no longer drive one simulator under the same agent-device session. Each host hands its engine a random token as `hostId` in `prepare`, `init`, and `finish`, and the mobile engine names the host's session `e2e-<target>-<token>-<slot>`. `@e2e-dev/mobile` now needs `@e2e-dev/core` 0.24.1 or newer, the first release that sends `hostId`. A host that finds no free device now fails instead of sharing one. A host that ends without `close()` (`process.exit()`, a kill), or whose session fails to close, leaves its device held until you run `agent-device close --session <name>`; closing the host now fails with an error that names the session when the close fails. A host's artifact folders under `artifactsDir` are now named `core/host-<token>-<attempt id>`, so an engine platform that is a secret's value no longer reaches a path on disk.
+
+- [#1919](https://github.com/e2e-inc/e2e/pull/1919) [`e88153b`](https://github.com/e2e-inc/e2e/commit/e88153b2f3b4f6f6b00352dca3960bfe0967975b) Thanks [@WellDunDun](https://github.com/WellDunDun)! - Add `locator.blur()` to remove focus from a web element.
+
+- [#2014](https://github.com/e2e-inc/e2e/pull/2014) [`7a8e546`](https://github.com/e2e-inc/e2e/commit/7a8e546e26a0c08fb0f52f237798c806dd5a611f) Thanks [@samanyudas](https://github.com/samanyudas)! - On iOS and Android, when a secure field on screen has no bounds to mask, `toHaveScreenshot` now fails at once with `POLICY_DENIED` instead of after its timeout, `app.screenshot()` fails with `POLICY_DENIED` instead of `ENGINE_FAILURE`, and an agent step reports `MASKING_UNPROVEN` for its screenshot.
+
+- [#1957](https://github.com/e2e-inc/e2e/pull/1957) [`24e73a2`](https://github.com/e2e-inc/e2e/commit/24e73a20968375757f5e70e488c286d69bc73b50) Thanks [@JaynouOliver](https://github.com/JaynouOliver)! - Implicit rows, cells, and list items under a non-conflicted `role="presentation"` or `role="none"` table or list now inherit that presentational role in the tree, matching Chrome and Playwright; explicit child roles remain unchanged.
+
+- [#1924](https://github.com/e2e-inc/e2e/pull/1924) [`003c18a`](https://github.com/e2e-inc/e2e/commit/003c18a4ee57be2a6a280dcc3047f5f3ff3fdf64) Thanks [@ijaidev](https://github.com/ijaidev)! - `browser.route`, `browser.unroute`, and `browser.waitForResponse` accept a
+  `{ method, url }` `RouteMatcher` pattern. The method is case-insensitive,
+  `url` keeps the string or `RegExp` grammar, and a route narrowed to another
+  method steps aside for the routes registered before it. `unroute` removes the
+  routes registered with the same pattern, method included.
+
 ## 0.16.1
 
 ### Patch Changes

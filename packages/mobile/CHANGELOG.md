@@ -1,5 +1,27 @@
 # @e2e-dev/mobile
 
+## 0.12.9
+
+### Patch Changes
+
+- [#1975](https://github.com/e2e-inc/e2e/pull/1975) [`1676981`](https://github.com/e2e-inc/e2e/commit/1676981ab76fd7a8b7262057a74b320545b0e3bb) Thanks [@okwasniewski](https://github.com/okwasniewski)! - Update agent-device to 0.21.41. On iOS, `device.dismissKeyboard()` no longer presses the keyboard's Hide Keyboard or Done key: an iPad keyboard now goes away by the same short drag as an iPhone one. Pressing Enter sends one Return to the focused input, a fill reaches only the input a tap at that point reaches, and a command on a session whose simulator was deleted fails at once instead of waiting about 20 seconds. A fill on iOS is also a little faster.
+
+- [#1893](https://github.com/e2e-inc/e2e/pull/1893) [`1d28ac0`](https://github.com/e2e-inc/e2e/commit/1d28ac0feac8808d92b2c4e3bf553937be700cb0) Thanks [@leszko11](https://github.com/leszko11)! - Add `device.isKeyboardShown()`, which returns whether the soft keyboard is on screen. It answers from what agent-device reports for the keyboard, else from the keyboard or its keys drawn on screen in the accessibility tree; the suggestion strip alone, as with a hardware keyboard, does not count. It answers `false` only when agent-device proves there is no keyboard; otherwise it fails with the reason. It changes nothing on the device. `device.dismissKeyboard()`, and the wait before acting on a control that waits out a relayout when the keyboard opened or closed, now use the same rule, so a probe that says the keyboard is hidden wins over keys the tree still lists. The dismissing drag starts above the suggestion strip, also when agent-device derived the keyboard's frame from the keys under it. When agent-device reports the keyboard up with no frame and no keyboard element on screen, `dismissKeyboard()` fails with `UNSUPPORTED_CAPABILITY` instead of dragging, since no point is known to be above the keyboard.
+
+- [#1976](https://github.com/e2e-inc/e2e/pull/1976) [`8eb3cc2`](https://github.com/e2e-inc/e2e/commit/8eb3cc27eabaf663a35c9930b861c851e0fbff81) Thanks [@okwasniewski](https://github.com/okwasniewski)! - A config that infers `web()` or `mobile()` type-checks again under pnpm with `declaration: true`. It failed with TS2883 since e2e 0.24.0. The factories now return `WebEngine` and `MobileEngine`, exported from each package.
+
+- [#2008](https://github.com/e2e-inc/e2e/pull/2008) [`5b61f22`](https://github.com/e2e-inc/e2e/commit/5b61f221aa69d6bf0b3dad0ea270fc85e5098475) Thanks [@michal-e2e](https://github.com/michal-e2e)! - Without a `session` option, two `mobile()` hosts from `launch()`, or a host and the test's own device, no longer drive one simulator under the same agent-device session. Each host hands its engine a random token as `hostId` in `prepare`, `init`, and `finish`, and the mobile engine names the host's session `e2e-<target>-<token>-<slot>`. `@e2e-dev/mobile` now needs `@e2e-dev/core` 0.24.1 or newer, the first release that sends `hostId`. A host that finds no free device now fails instead of sharing one. A host that ends without `close()` (`process.exit()`, a kill), or whose session fails to close, leaves its device held until you run `agent-device close --session <name>`; closing the host now fails with an error that names the session when the close fails. A host's artifact folders under `artifactsDir` are now named `core/host-<token>-<attempt id>`, so an engine platform that is a secret's value no longer reaches a path on disk.
+
+- [#2008](https://github.com/e2e-inc/e2e/pull/2008) [`5b61f22`](https://github.com/e2e-inc/e2e/commit/5b61f221aa69d6bf0b3dad0ea270fc85e5098475) Thanks [@michal-e2e](https://github.com/michal-e2e)! - An engine's `finish` now forgets the devices it bound for the target, so a `mobile()` engine reused by one `launch()` host after another no longer keeps every finished host's device and daemon address.
+
+- [#1919](https://github.com/e2e-inc/e2e/pull/1919) [`e88153b`](https://github.com/e2e-inc/e2e/commit/e88153b2f3b4f6f6b00352dca3960bfe0967975b) Thanks [@WellDunDun](https://github.com/WellDunDun)! - Add `locator.blur()` to remove focus from a web element.
+
+- [#2033](https://github.com/e2e-inc/e2e/pull/2033) [`abb4064`](https://github.com/e2e-inc/e2e/commit/abb40648ed83ef2d7c28b76a725798ffd8f3233f) Thanks [@FaZeDrug](https://github.com/FaZeDrug)! - Add `device.viewport()` to read screen dimensions in the coordinate space of screen taps.
+
+- [#2014](https://github.com/e2e-inc/e2e/pull/2014) [`7a8e546`](https://github.com/e2e-inc/e2e/commit/7a8e546e26a0c08fb0f52f237798c806dd5a611f) Thanks [@samanyudas](https://github.com/samanyudas)! - On iOS and Android, when a secure field on screen has no bounds to mask, `toHaveScreenshot` now fails at once with `POLICY_DENIED` instead of after its timeout, `app.screenshot()` fails with `POLICY_DENIED` instead of `ENGINE_FAILURE`, and an agent step reports `MASKING_UNPROVEN` for its screenshot.
+
+- [#1906](https://github.com/e2e-inc/e2e/pull/1906) [`b180433`](https://github.com/e2e-inc/e2e/commit/b180433047826b481970f1d0377385a162433e7c) Thanks [@karolkulesza](https://github.com/karolkulesza)! - `device.uninstallApp(id)` removes an app from the device and `device.isAppInstalled(id)` checks for one; without an id, both use the pinned app.
+
 ## 0.12.8
 
 ### Patch Changes

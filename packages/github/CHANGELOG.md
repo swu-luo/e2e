@@ -1,5 +1,14 @@
 # @e2e-dev/github
 
+## 0.4.7
+
+### Patch Changes
+
+- [#1887](https://github.com/e2e-inc/e2e/pull/1887) [`198d25f`](https://github.com/e2e-inc/e2e/commit/198d25f038c5f69c697224ce22e2d73b38c97766) Thanks [@samanyudas](https://github.com/samanyudas)! - After a rerun, the merged report counts a serial test that calls `test.fixme()` in its body as executed, as it does for `test.skip()`. The pull request comment does not change.
+
+- [#2015](https://github.com/e2e-inc/e2e/pull/2015) [`23aa697`](https://github.com/e2e-inc/e2e/commit/23aa697e2627b9c0ee436ea40128b3ee8f682c1c) Thanks [@satya164](https://github.com/satya164)! - `--step` and `screen.pause()` keys now appear below the live summary, with `s` for the screen and `l` for the app log.
+  Time when every running worker is paused is excluded from the terminal's `Duration` row and the report's new `run.durationMs` field.
+
 ## 0.4.6
 
 ### Patch Changes
