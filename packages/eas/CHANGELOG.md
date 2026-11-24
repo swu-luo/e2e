@@ -1,5 +1,11 @@
 # @e2e-dev/eas
 
+## 0.3.6
+
+### Patch Changes
+
+- [#2184](https://github.com/e2e-inc/e2e/pull/2184) [`a560224`](https://github.com/e2e-inc/e2e/commit/a5602240c9e37ecf60310b68fb508a0225676524) Thanks [@DeryFerd](https://github.com/DeryFerd)! - The install command now lists `e2e` and `@e2e-dev/mobile`. Installing `@e2e-dev/eas` alone left them out of `package.json`, and with pnpm `e2e.config.ts` could not import them.
+
 ## 0.3.5
 
 ### Patch Changes
